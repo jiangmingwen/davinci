@@ -1,18 +1,24 @@
+import { useEffect } from 'react'
 import './App.css'
-function run(num: number): void
-function run(num: boolean): void
-function run(num: boolean, str: string): void
-function run(str: string, flag: boolean): void
-function run(str: string, flag?: boolean): void
-function run(str: number | string | boolean, flag?: boolean | string): void {
-  console.log(str, flag)
-  // 感觉这里还是要写if判断才能做逻辑
-}
-run('1', true)
-run(true, '1')
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { getConfig } from './store/action'
+import AppRouter from './router'
 
-function App() {
-  return <div className="App"></div>
+interface IAppProps {
+  getGloabalConfig: () => void
 }
 
-export default App
+function App(props: IAppProps) {
+  useEffect(() => {
+    props.getGloabalConfig()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  return <AppRouter />
+}
+
+export default connect(
+  () => ({}),
+  (dispatch) => bindActionCreators({ getGloabalConfig: getConfig }, dispatch)
+)(App)

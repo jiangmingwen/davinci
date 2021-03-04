@@ -1,12 +1,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './index.css'
+import { ConfigProvider } from 'antd'
+import { Provider } from 'react-redux'
+
+import zhCN from 'antd/es/locale/zh_CN'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
+import 'antd/dist/antd.less'
+import './index.css'
+import store from './store'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <ConfigProvider locale={zhCN}>
+        <App />
+      </ConfigProvider>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 )

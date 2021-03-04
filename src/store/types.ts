@@ -1,0 +1,1 @@
+export const GET_GLOABLE_CONFIG = 'GET_GLOABLE_CONFIG'
