@@ -1,22 +1,10 @@
 import LoginForm from './LoginForm'
-import LoginBackground from './LoginBackground'
-import './style.less'
-import { connect } from 'react-redux'
+import LoginTemplate from '@/components/Login'
 
-interface ILoginProps {
-  version: string
-}
-
-function Login(props: ILoginProps) {
+export default function Login() {
   return (
-    <div className="login-page">
-      <LoginBackground />
+    <LoginTemplate>
       <LoginForm />
-      <div className="version-box">版本：{props.version}</div>
-    </div>
+    </LoginTemplate>
   )
 }
-
-export default connect((state: any) => ({
-  version: state.global.version
-}))(Login)

@@ -1,6 +1,7 @@
 import bgCircle2 from '@imgs/bgCircle2.png'
 import bgCircle3 from '@imgs/bgCircle3.png'
 import bgCircle4 from '@imgs/bgCircle4.png'
+
 export default function LoginBackground() {
   return (
     <>

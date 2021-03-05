@@ -12,6 +12,13 @@ const staticReducers = {
   global: reducer
 }
 
+function createReducer(asyncReducers: ReducersMapObject = {}) {
+  return combineReducers({
+    ...staticReducers,
+    ...asyncReducers
+  })
+}
+
 // Configure the store
 function configureStore(initialState = {}) {
   const store: any = createStore(
@@ -44,10 +51,3 @@ export const injectReducer = (
 }
 
 export default store
-
-function createReducer(asyncReducers: ReducersMapObject = {}) {
-  return combineReducers({
-    ...staticReducers,
-    ...asyncReducers
-  })
-}

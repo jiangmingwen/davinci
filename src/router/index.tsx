@@ -1,13 +1,10 @@
-import { BrowserRouter as Router, Switch } from 'react-router-dom'
-import RouterAuth from './Auth'
+import { HashRouter as Router } from 'react-router-dom'
 import routesConfig from './config'
-
+import RouteRender from './RouteRender'
 export default function AppRoute() {
   return (
     <Router>
-      <Switch>
-        <RouterAuth config={routesConfig} />
-      </Switch>
+      <RouteRender routes={routesConfig} />
     </Router>
   )
 }

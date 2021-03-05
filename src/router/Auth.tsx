@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import { Route, Redirect } from 'react-router-dom'
+import { Route, Redirect, Switch } from 'react-router-dom'
 
 import { IRoutesConfig } from './config'
 
@@ -20,31 +20,70 @@ export const hasPermission = (authCode: string): boolean => {
 }
 
 export default class RouterAuth extends Component<any, IpropsModel> {
-  render() {
-    const { location, config } = this.props
-    const { pathname } = location
+  constructor(props: IpropsModel) {
+    super(props)
+    this.transformRouteConfigToFlat(this.props.config)
+  }
+  private flatRoutePatchMapData: { [key: string]: any } = {}
 
-    //如果是白名单，直接跳过
-    const targetRouterConfig: IRoutesConfig = config.find(
-      (v: IRoutesConfig) => v.path === pathname
+  private renderChilren(route: IRoutesConfig) {
+    return (
+      <>
+        {route.redirect && <Redirect to={route.redirect} />}
+        <route.component>
+          <Switch>
+            {route?.children?.map((routeItem) => {
+              if (route?.children?.length) {
+                return this.renderChilren(routeItem)
+              } else {
+                return (
+                  <Route
+                    key={routeItem.path}
+                    path={routeItem.path}
+                    component={routeItem.component}
+                  />
+                )
+              }
+            })}
+          </Switch>
+        </route.component>
+      </>
     )
+  }
 
+  private transformRouteConfigToFlat(
+    list: IRoutesConfig[],
+    parentPath?: string
+  ) {
+    list.forEach((item) => {
+      const path =
+        parentPath && !item.path.startsWith('/')
+          ? parentPath + '/' + item.path
+          : item.path
+      this.flatRoutePatchMapData[path] = item
+      if (item.children) {
+        this.transformRouteConfigToFlat(item.children || [], path)
+      }
+    })
+  }
+
+  render() {
+    //路由守卫功能
+    const { location } = this.props
+    const { pathname } = location
+    const targetRouterConfig: IRoutesConfig = this.flatRoutePatchMapData[
+      pathname
+    ]
+    console.log(targetRouterConfig, location)
+
+    console.log(this.flatRoutePatchMapData, 'flatRoutePatchMapData')
     if (targetRouterConfig) {
-      if (targetRouterConfig.white) {
-        const { component } = targetRouterConfig
-        return <Route exact path={pathname} component={component} />
-      }
-
-      //如果不是白名单
-      //是否登录
-      //判断是否有该页面的权限
-      if (hasPermission(targetRouterConfig.authCode || '')) {
-        return (
-          <Route path={pathname} component={targetRouterConfig.component} />
-        )
-      } else {
-        return <Redirect to="/404" />
-      }
+      return (
+        <Route
+          path={pathname}
+          render={() => this.renderChilren(targetRouterConfig)}
+        />
+      )
     } else {
       return <Redirect to="/404" />
     }

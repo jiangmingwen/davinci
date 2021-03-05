@@ -32,10 +32,24 @@ export function request<T = any>(
   url: string | IHttpOptions,
   options?: IHttpOptions
 ): Promise<T> {
+  const token = local.getItem('TOKEN')
   const axiosPromise =
     typeof url === 'string'
-      ? axios(baseUrl + url, options)
-      : axios({ ...url, url: baseUrl + url.url })
+      ? axios(baseUrl + url, {
+          ...options,
+          headers: {
+            ...options?.headers,
+            Authorization: token ? `Bearer ${token}` : undefined
+          }
+        })
+      : axios({
+          ...url,
+          url: baseUrl + url.url,
+          headers: {
+            ...url.headers,
+            Authorization: token ? `Bearer ${token}` : undefined
+          }
+        })
   return new Promise((resolve, reject) => {
     axiosPromise
       .then(parseData)
@@ -62,7 +76,6 @@ export function request<T = any>(
       })
       .catch((error: AxiosError) => {
         reject(error.response?.data?.payload)
-        console.log(error.response?.data)
         notification.error({
           message: error.response?.data?.header?.code || '请求错误',
           description: error.response?.data?.header?.msg || '未知错误'
